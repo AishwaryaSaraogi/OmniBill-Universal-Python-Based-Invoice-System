@@ -91,13 +91,17 @@ if st.session_state.selected_student == "➕ Add New Student":
     try:
         if not Students.empty:
             id_str = str(Students["Student_id"].iloc[-1])
-            id_num = int(id_str.split('-')[-1])
-            id = id_num + 1
-            new_id = f"STU-2026-{id}"
+            if '-' in id_str:
+                id_num = int(id_str.split('-')[-1])
+            else:
+                id_num = int(id_str)
+            next_id = id_num + 1
         else: 
-            new_id = "STU-2026-101"
+            next_id = 101
     except Exception as e:
-        new_id = f"STU-2026-{len(Students) + 101}"
+        next_id = len(Students) + 101
+
+    new_id = f"STU-2026-{next_id}"
 
     st.sidebar.info(f"Generated Student ID: *{new_id}*")
 
@@ -117,7 +121,7 @@ if st.session_state.selected_student == "➕ Add New Student":
                 with open("Students.csv", "a", encoding = "utf-8") as f:
                     f.write('\n')
 
-            row = {'Student_id': id, 'Student_name': Name.strip(), 'Address': Address.strip(), 'Mobile Number': Mobile_Number.strip(), 'Email': Email.strip()}
+            row = {'Student_id': new_id, 'Student_name': Name.strip(), 'Address': Address.strip(), 'Mobile Number': Mobile_Number.strip(), 'Email': Email.strip()}
             new = pd.DataFrame([row])
             new.to_csv("Students.csv", mode = 'a', header = False, index = False, lineterminator = '\n')
 
